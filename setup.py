@@ -20,7 +20,7 @@ setup(
     name='django_values_group',
 
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.0.1.dev1',
+    version='0.0.1',
 
     description='Have your valuesquerysets return model instances',
     long_description=long_description,
@@ -43,7 +43,9 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
 
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=[],
+    install_requires=[
+        'django'
+    ],
     extras_require={},
     package_data={},
 
