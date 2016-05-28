@@ -1,7 +1,11 @@
 from django.db import models
+from .query import BookQuerySet
 
 
 class Book(models.Model):
+
+    objects = BookQuerySet.as_manager()
+
     title = models.CharField(max_length=50)
     publication_date = models.DateTimeField()
     author = models.ForeignKey('Author')
@@ -19,4 +23,4 @@ class Genre(models.Model):
 
 class Nation(models.Model):
     name = models.CharField(max_length=50)
-    demonyn = models.CharField(max_length=50)
+    demonym = models.CharField(max_length=50)

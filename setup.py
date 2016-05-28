@@ -17,14 +17,14 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
     long_description = f.read()
 setup(
-    name='django_values_group',
+    name='django_group_by',
 
     # https://packaging.python.org/en/latest/single_source_version.html
     version='0.0.1',
 
-    description='Have your valuesquerysets return model instances',
+    description='Group by arbitrary model fields',
     long_description=long_description,
-    url='https://github.com/kako-nawao/django-values-group',
+    url='https://github.com/kako-nawao/django-group-by',
     author='Claudio Omar Melendrez Baeza',
     author_email='claudio.melendrez@gmail.com',
     license='MIT',
@@ -60,4 +60,3 @@ setup(
     # Django test suite
     test_suite='runtests.run_tests'
 )
-
