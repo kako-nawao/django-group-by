@@ -8,55 +8,60 @@ class AggregatedGroup(object):
     Generic object that constructs related objects like a Django model
     from queryset values() data.
     """
-    def __init__(self, model, values):
+    def __init__(self, model, row_values):
         self._model = model
-        self._values = values
-        self._populate_attrs()
+        self._row_values = row_values
+        self._set_values()
 
     @cached_property
     def _data(self):
         """
         Cached data built from instance raw _values as a dictionary.
         """
-        data = {}
+        d = {}
 
         # Iterate all keys and values
-        for k, v in self._values.items():
+        for k, v in self._row_values.items():
             # Split related model fields
-            attrs = k.split('__')
+            attrs = k.rsplit('__', 1)
 
-            # Set value depending on number of attrs
-            if len(attrs) > 1:
-                # Related model field, set as nested dict
-                m, f = attrs[-2:]
-                if m not in data:
-                    data[m] = {}
-                data[m][f] = v
+            # Set value depending case
+            if len(attrs) == 2:
+                # Related model field, store nested
+                fk, fn = attrs
+                if fk not in d:
+                    d[fk] = {}
+                d[fk][fn] = v
 
             else:
-                # Own field, set directly
-                data[k] = v
+                # Own model field, store directly
+                d[k] = v
 
         # Return (+cache) data
-        return data
+        return d
 
-    def _populate_attrs(self):
+    def _set_values(self):
         """
-        Populate instance attributes using _data.
+        Populate instance with given.
         """
         # Iterate all keys and values in data
         for k, v in self._data.items():
-            # Process value and set
+            # If it's a dict, process it (it's probably instance data)
             if isinstance(v, dict):
                 try:
-                    # A dict is usually a model, get field, model and initialize
-                    f = getattr(self._model, k).field
-                    model = f.related_model
-                    v = model(**v)
+                    # Get related model from field (follow path)
+                    rel_model = self._model
+                    for attr in k.split('__'):
+                        rel_model = getattr(rel_model, attr).field.related_model
 
                 except AttributeError:
-                    # Not a model, skip
-                    continue
+                    # Not a model, maybe it is a dict field (?)
+                    pass
 
-            # Set that value
+                else:
+                    # It is a model, build instance from data
+                    k = k.replace('__', '_')
+                    v = rel_model(**v)
+
+            # Set value
             setattr(self, k, v)

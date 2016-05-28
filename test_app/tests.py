@@ -5,16 +5,13 @@ from django.test import TestCase
 from django_group_by.group import AggregatedGroup
 from django_group_by.query import GroupByMixin
 
-from .models import Book, Author
+from .models import Book, Author, Genre, Nation
 from .factories import AuthorFactory, BookFactory
 
 
 class AggregatedGroupTest(TestCase):
 
-    def test_init(self):
-        self.skipTest('')
-
-    @patch.object(AggregatedGroup, '_populate_attrs', MagicMock())
+    @patch.object(AggregatedGroup, '_set_values', MagicMock())
     def test_data(self):
         # Simplest case, no nesting
         agg = AggregatedGroup(None, {'name': 'Peter', 'age': 56})
@@ -30,12 +27,37 @@ class AggregatedGroupTest(TestCase):
                                      'birth__city__foundation__year': 1})
         self.assertEqual(agg._data, {
             'name': 'Peter',
-            'city': {'name': 'Akropolis'},
-            'foundation': {'year': 1}
+            'birth__city': {'name': 'Akropolis'},
+            'birth__city__foundation': {'year': 1}
         })
 
-    def test_populate_attrs(self):
-        self.skipTest('')
+    def test_init(self):
+        # Provide only title, has only that attr
+        values = {'title': 'The Colour of Magic'}
+        agg = AggregatedGroup(Book, values)
+        self.assertEqual(agg.title, 'The Colour of Magic')
+        with self.assertRaises(AttributeError):
+            agg.publication_date
+        with self.assertRaises(AttributeError):
+            agg.author
+        with self.assertRaises(AttributeError):
+            agg.genre
+
+        # Provide also related models
+        values.update({'author__name': 'Terry Pratchett', 'genre__name': 'Fantasy'})
+        agg = AggregatedGroup(Book, values)
+        self.assertEqual(type(agg.author), Author)
+        self.assertEqual(agg.author.name, 'Terry Pratchett')
+        self.assertEqual(type(agg.genre), Genre)
+        self.assertEqual(agg.genre.name, 'Fantasy')
+
+        # Deep relations, make sure it's followed properly
+        values.update({'author__nationality__name': 'Great Britain',
+                       'author__nationality__demonym': 'British'})
+        agg = AggregatedGroup(Book, values)
+        self.assertEqual(type(agg.author_nationality), Nation)
+        self.assertEqual(agg.author_nationality.name, 'Great Britain')
+        self.assertEqual(agg.author_nationality.demonym, 'British')
 
 
 class QuerySetTest(TestCase):
@@ -61,29 +83,57 @@ class QuerySetTest(TestCase):
                                        'author__nationality__demonym', 'genre__id', 'genre__name'})
 
     def test_group_by(self):
-        self.skipTest('')
         # Create two books by same author
-        author = AuthorFactory.create()
-        BookFactory.create(author=author, title='The Colour of Magic')
-        BookFactory.create(author=author, title='The Light Fantastic')
+        author1 = AuthorFactory.create(name='Terry Pratchett', nationality__name='Great Britain')
+        BookFactory.create(author=author1, title='The Colour of Magic')
+        BookFactory.create(author=author1, title='The Light Fantastic')
 
         # Create another book with same title, but different author
-        BookFactory.create(title='The Colour of Magic')
+        author2 = AuthorFactory.create(nationality__name='United States')
+        BookFactory.create(author=author2, title='The Colour of Magic')
 
         # Group by author, should return two with only author set
-        res = Book.objects.group_by('author').distinct()
+        res = Book.objects.group_by('author').order_by('author').distinct()
         self.assertEqual(res.count(), 2)
         for group in res:
             self.assertTrue(type(group.author), Author)
-            self.assertEqual(group.title, None)
-            self.assertEqual(group.publication_date, None)
-            self.assertEqual(group.genre, None)
+            with self.assertRaises(AttributeError):
+                group.title
+            with self.assertRaises(AttributeError):
+                group.publication_date
+            with self.assertRaises(AttributeError):
+                group.genre
+
+        # Check that they're authors 1 and 2
+        tp, oth = res.all()
+        self.assertEqual(tp.author, author1)
+        self.assertEqual(oth.author, author2)
 
         # Group by title, still two with only title set
-        res = Book.objects.group_by('title')
+        res = Book.objects.group_by('title').distinct()
         self.assertEqual(res.count(), 2)
         for group in res:
-            self.assertEqual(group.author, None)
+            with self.assertRaises(AttributeError):
+                group.author
             self.assertTrue(group.title.startswith('The'))
-            self.assertEqual(group.publication_date, None)
-            self.assertEqual(group.genre, None)
+            with self.assertRaises(AttributeError):
+                group.publication_date
+            with self.assertRaises(AttributeError):
+                group.genre
+
+        # Group by nationality, only attr author_nationality is included
+        res = Book.objects.group_by('author__nationality').order_by('author__nationality').distinct()
+        self.assertEqual(res.count(), 2)
+        tp, oth = res.all()
+        self.assertEqual(tp.author_nationality, author1.nationality)
+        self.assertEqual(tp.author_nationality.name, 'Great Britain')
+        with self.assertRaises(AttributeError):
+            tp.title
+        with self.assertRaises(AttributeError):
+            tp.author
+        self.assertEqual(oth.author_nationality, author2.nationality)
+        self.assertEqual(oth.author_nationality.name, 'United States')
+        with self.assertRaises(AttributeError):
+            oth.title
+        with self.assertRaises(AttributeError):
+            oth.author

@@ -22,7 +22,7 @@ class GroupByQuerySet(ValuesQuerySet):
         # Iterate results and yield AggregatedGroup instances
         for row in self.query.get_compiler(self.db).results_iter():
             data = dict(zip(names, row))
-            obj = AggregatedGroup(model=self.model, values=data)
+            obj = AggregatedGroup(self.model, data)
             yield obj
 
 
