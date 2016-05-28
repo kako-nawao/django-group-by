@@ -1,1 +1,11 @@
-.idea/
+# Python bytecodes
+*.pyc
+
+# IDE files
+/.idea
+
+# Testing environments
+/.tox
+
+# Packaging/distribution
+/*.egg-info
