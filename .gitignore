@@ -8,6 +8,7 @@
 /.coverage
 /.tox
 /coverage
+/coverage.xml
 
 # Packaging/distribution
 /*.egg-info
