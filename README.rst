@@ -2,9 +2,17 @@
 Django GroupBy
 ==============
 
-.. image:: https://img.shields.io/travis/kako-nawao/django-group-by.svg?style=plastic
+.. image:: https://img.shields.io/pypi/l/django-group-by.svg
+    :target: http://www.opensource.org/licenses/MIT
+
+.. image:: https://img.shields.io/pypi/pyversions/django-group-by.svg
+    :target: https://pypi.python.org/pypi/django-group-by
+.. image:: https://img.shields.io/pypi/v/django-group-by.svg
+    :target: https://pypi.python.org/pypi/django-group-by
+
+.. image:: https://img.shields.io/travis/kako-nawao/django-group-by.svg
     :target: https://travis-ci.org/kako-nawao/django-group-by
-.. image:: https://img.shields.io/coveralls/kako-nawao/django-group-by.svg?style=plastic
+.. image:: https://img.shields.io/coveralls/kako-nawao/django-group-by.svg
     :target: https://coveralls.io/github/kako-nawao/django-group-by
 
 This package provides a mixin for Django QuerySets that adds a method ``group_by`` that
@@ -42,7 +50,7 @@ Create a QuerySet subclass with the ``GroupByMixin`` to use in a model's manager
 
 Then use it just like ``values``, and you'll get a similar query set::
 
-    >>> some_rows = Book.objects.group_by('title', 'author', 'author__nationality).distinct()
+    >>> some_rows = Book.objects.group_by('title', 'author', 'author__nationality').distinct()
     >>> some_rows.count()
     4
 
@@ -73,5 +81,5 @@ think that getting *{'author': 5}* as a result is just weird.
 
 If you just want the ID you can specify it::
 
-    >>> some_rows = Book.objects.group_by('title', 'author_id', 'author__nationality_id).distinct()
+    >>> some_rows = Book.objects.group_by('title', 'author_id', 'author__nationality_id').distinct()
 
