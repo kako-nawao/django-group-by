@@ -4,8 +4,10 @@
 # IDE files
 /.idea
 
-# Testing environments
+# Testing environment/results
+/.coverage
 /.tox
+/coverage
 
 # Packaging/distribution
 /*.egg-info
