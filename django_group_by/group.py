@@ -13,6 +13,10 @@ class AggregatedGroup(object):
         self._row_values = row_values
         self._set_values()
 
+    def __repr__(self):
+        return u'<{} for {}>'.format(self.__class__.__name__,
+                                     self._model.__name__)
+
     @cached_property
     def _data(self):
         """
