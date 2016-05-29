@@ -1,0 +1,4 @@
+# Development requirements, needed to run tests
+
+tox>=2.3,<2.99
+

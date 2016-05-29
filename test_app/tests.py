@@ -1,5 +1,8 @@
 
-from unittest.mock import patch, MagicMock
+try:
+    from unittest.mock import patch, MagicMock
+except ImportError:
+    from mock import patch, MagicMock
 
 from django.test import TestCase
 from django_group_by.group import AggregatedGroup
