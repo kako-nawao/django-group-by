@@ -74,3 +74,4 @@ think that getting *{'author': 5}* as a result is just weird.
 If you just want the ID you can specify it::
 
     >>> some_rows = Book.objects.group_by('title', 'author_id', 'author__nationality_id).distinct()
+

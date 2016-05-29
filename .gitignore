@@ -11,4 +11,6 @@
 /coverage.xml
 
 # Packaging/distribution
+/build
+/dist
 /*.egg-info
