@@ -1,1 +1,14 @@
-.idea/
+# Python bytecodes
+*.pyc
+
+# IDE files
+/.idea
+
+# Testing environment/results
+/.coverage
+/.tox
+/coverage
+/coverage.xml
+
+# Packaging/distribution
+/*.egg-info
