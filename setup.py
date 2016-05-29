@@ -14,13 +14,13 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the relevant file
-with open(path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
+with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 setup(
     name='django_group_by',
 
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.0.1',
+    version='0.1.1',
 
     description='Group by arbitrary model fields',
     long_description=long_description,
@@ -32,19 +32,23 @@ setup(
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         'Development Status :: 3 - Alpha',
-        'Environment :: Console',
-        'Intended Audience :: End Users/Desktop',
+        'Environment :: Plugins',
+        'Framework :: Django :: 1.8',
+        'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
-        'Operating System :: Unix',
-        'Programming Language :: Python :: 3',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Topic :: Software Development',
     ],
 
     keywords='django grouping values models',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    packages=find_packages(exclude=['contrib', 'docs', 'test_app']),
 
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-        'django'
+        'django==1.8'
     ],
     extras_require={},
     package_data={},
