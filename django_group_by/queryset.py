@@ -1,3 +1,7 @@
+"""
+This module contains the implementations for Django 1.8 and below, for which we
+need a customized ValuesQuerySet.
+"""
 from django.db.models.query import ValuesQuerySet
 
 from .group import AggregatedGroup
@@ -24,7 +28,9 @@ class GroupByQuerySet(ValuesQuerySet):
 
 
 class GroupByQuerySetMixinBase(object):
-
+    """
+    Implementation of the group_by method using GroupByQuerySet.
+    """
     def group_by(self, *fields):
         """
         Clone the queryset using GroupByQuerySet.

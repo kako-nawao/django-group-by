@@ -1,3 +1,7 @@
+"""
+This module contains the implementations for Django 1.9 and above, for which we
+need a customized ValuesIterable.
+"""
 from django.db.models.query import ValuesIterable
 
 from .group import AggregatedGroup
@@ -27,7 +31,9 @@ class GroupByIterable(ValuesIterable):
 
 
 class GroupByIterableMixinBase(object):
-
+    """
+    Implementation of the group_by method using GroupByIterable.
+    """
     def group_by(self, *fields):
         """
         Clone the queryset using GroupByQuerySet.

@@ -1,4 +1,7 @@
-
+"""
+This module contains the final mixin implementation, for whatever version
+of Django is present.
+"""
 from django.db.models import ForeignKey
 
 try:
@@ -69,4 +72,3 @@ class GroupByMixin(GroupByMixinBase):
 
         # Return all fields
         return res
-
