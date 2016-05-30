@@ -20,7 +20,7 @@ setup(
     name='django_group_by',
 
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.2.0',
+    version='0.2.1',
 
     description='Group by arbitrary model fields',
     long_description=long_description,
@@ -34,6 +34,7 @@ setup(
         'Development Status :: 3 - Alpha',
         'Environment :: Plugins',
         'Framework :: Django :: 1.8',
+        'Framework :: Django :: 1.9',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',

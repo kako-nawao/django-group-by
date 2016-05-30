@@ -22,9 +22,16 @@ return dictionaries, but a *model-like object with model instances for related v
 Installation
 ============
 
-Install from this repository::
+Install from PyPI::
 
-    pip install -e https://github.com/kako-nawao/django-group-by.git
+    pip install django-group-by
+
+Compatibility
+~~~~~~~~~~~~~
+
+This package is compatible with Django 1.8 and 1.9, and Python versions 2.7, 3.4 and 3.5.
+Probably others, but those 6 combinations are the ones against which we build (by Travis CI).
+
 
 Usage
 =====
