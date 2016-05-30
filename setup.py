@@ -48,7 +48,7 @@ setup(
 
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-        'django>=1.8,<1.99'
+        'django>=1.8,<1.9.99'
     ],
     extras_require={},
     package_data={},
