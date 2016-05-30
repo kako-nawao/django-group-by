@@ -1,3 +1,4 @@
-__author__ = 'kako'
-
-from .query import GroupByMixin
+"""
+This module contains the package exports.
+"""
+from .mixin import GroupByMixin

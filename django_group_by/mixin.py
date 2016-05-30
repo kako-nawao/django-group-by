@@ -1,32 +1,19 @@
-__author__ = 'kako'
-
-from django.db.models.query import ValuesQuerySet
+"""
+This module contains the final mixin implementation, for whatever version
+of Django is present.
+"""
 from django.db.models import ForeignKey
 
-from .group import AggregatedGroup
+try:
+    # Django 1.9+
+    from .iterable import GroupByIterableMixinBase as GroupByMixinBase
+
+except ImportError:
+    # Django 1.8-
+    from .queryset import GroupByQuerySetMixinBase as GroupByMixinBase
 
 
-class GroupByQuerySet(ValuesQuerySet):
-    """
-    Modified ValuesQuerySet that yields AggregatedGroup instances instead
-    of dictionaries, which resemble the queryset's model in that all foreign
-    related field values become actual model instances.
-    """
-    def iterator(self):
-        # Same as in django
-        extra_names = list(self.query.extra_select)
-        field_names = self.field_names
-        annotation_names = list(self.query.annotation_select)
-        names = extra_names + field_names + annotation_names
-
-        # Iterate results and yield AggregatedGroup instances
-        for row in self.query.get_compiler(self.db).results_iter():
-            data = dict(zip(names, row))
-            obj = AggregatedGroup(self.model, data)
-            yield obj
-
-
-class GroupByMixin(object):
+class GroupByMixin(GroupByMixinBase):
     """
     QuerySet mixin that adds a group_by() method, similar to values() but
     which returns AggregatedGroup instances when iterated instead of
@@ -85,13 +72,3 @@ class GroupByMixin(object):
 
         # Return all fields
         return res
-
-    def group_by(self, *fields):
-        """
-        Clone the queryset using GroupByQuerySet.
-
-        :param fields:
-        :return:
-        """
-        fields = self._expand_group_by_fields(self.model, fields)
-        return self._clone(klass=GroupByQuerySet, setup=True, _fields=fields)

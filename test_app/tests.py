@@ -5,8 +5,8 @@ except ImportError:
     from mock import patch, MagicMock
 
 from django.test import TestCase
+from django_group_by import GroupByMixin
 from django_group_by.group import AggregatedGroup
-from django_group_by.query import GroupByMixin
 
 from .models import Book, Author, Genre, Nation
 from .factories import AuthorFactory, BookFactory
