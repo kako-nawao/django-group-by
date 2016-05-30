@@ -20,7 +20,7 @@ setup(
     name='django_group_by',
 
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.2.1',
+    version='0.2.2',
 
     description='Group by arbitrary model fields',
     long_description=long_description,
