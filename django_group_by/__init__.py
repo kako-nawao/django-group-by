@@ -1,3 +1,2 @@
-__author__ = 'kako'
 
-from .query import GroupByMixin
+from .mixin import GroupByMixin

@@ -20,7 +20,7 @@ setup(
     name='django_group_by',
 
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1.1',
+    version='0.2.0',
 
     description='Group by arbitrary model fields',
     long_description=long_description,
@@ -48,7 +48,7 @@ setup(
 
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-        'django==1.8'
+        'django>=1.8,<1.99'
     ],
     extras_require={},
     package_data={},
