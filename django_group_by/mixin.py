@@ -47,7 +47,7 @@ class GroupByMixin(GroupByMixinBase):
                 model_field = model._meta.get_field(field_name)
 
                 if isinstance(model_field, (ForeignKey, ManyToManyField)):
-                    # It's a FK, get model
+                    # It's a related field, get model
                     related_model = model_field.related_model
 
                     # Append all its fields with the correct prefix
