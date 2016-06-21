@@ -9,7 +9,7 @@ from django_group_by import GroupByMixin
 from django_group_by.group import AggregatedGroup
 
 from .models import Book, Author, Genre, Nation
-from .factories import AuthorFactory, BookFactory
+from .factories import AuthorFactory, BookFactory, GenreFactory
 
 
 class AggregatedGroupTest(TestCase):
@@ -44,7 +44,7 @@ class AggregatedGroupTest(TestCase):
         with self.assertRaises(AttributeError):
             agg.author
         with self.assertRaises(AttributeError):
-            agg.genre
+            agg.genres
 
         # FK None (all fields None, including ID), should not init model
         values.update({'author__id': None, 'author__name': None})
@@ -53,12 +53,12 @@ class AggregatedGroupTest(TestCase):
 
         # Change to FK values, without ID
         values.pop('author__id')
-        values.update({'author__name': 'Terry Pratchett', 'genre__name': 'Fantasy'})
+        values.update({'author__name': 'Terry Pratchett', 'genres__name': 'Fantasy'})
         agg = AggregatedGroup(Book, values)
         self.assertEqual(type(agg.author), Author)
         self.assertEqual(agg.author.name, 'Terry Pratchett')
-        self.assertEqual(type(agg.genre), Genre)
-        self.assertEqual(agg.genre.name, 'Fantasy')
+        self.assertEqual(type(agg.genres), Genre)
+        self.assertEqual(agg.genres.name, 'Fantasy')
 
         # Deep relations, make sure it's followed properly
         values.update({'author__nationality__name': 'Great Britain',
@@ -77,29 +77,35 @@ class QuerySetTest(TestCase):
         self.assertEqual(set(fields), {'title', 'publication_date'})
 
         # Related model field, same
-        fields = GroupByMixin._expand_group_by_fields(Book, ['author__id', 'genre__name'])
-        self.assertEqual(set(fields), {'author__id', 'genre__name'})
+        fields = GroupByMixin._expand_group_by_fields(Book, ['author__id', 'genres__name'])
+        self.assertEqual(set(fields), {'author__id', 'genres__name'})
 
         # Related model, must expand
-        fields = GroupByMixin._expand_group_by_fields(Book, ['author', 'genre'])
+        fields = GroupByMixin._expand_group_by_fields(Book, ['author', 'genres'])
         self.assertEqual(set(fields), {'author__id', 'author__name', 'author__nationality_id',
-                                       'genre__id', 'genre__name'})
+                                       'genres__id', 'genres__name'})
 
         # Related model two levels deep, must expand all
-        fields = GroupByMixin._expand_group_by_fields(Book, ['author', 'author__nationality', 'genre'])
+        fields = GroupByMixin._expand_group_by_fields(Book, ['author', 'author__nationality', 'genres'])
         self.assertEqual(set(fields), {'author__id', 'author__name', 'author__nationality_id',
                                        'author__nationality__id', 'author__nationality__name',
-                                       'author__nationality__demonym', 'genre__id', 'genre__name'})
+                                       'author__nationality__demonym', 'genres__id', 'genres__name'})
 
     def test_group_by(self):
         # Create two books by same author
         author1 = AuthorFactory.create(name='Terry Pratchett', nationality__name='Great Britain')
-        BookFactory.create(author=author1, title='The Colour of Magic')
-        BookFactory.create(author=author1, title='The Light Fantastic')
+        book1 = BookFactory.create(author=author1, title='The Colour of Magic')
+        book2 = BookFactory.create(author=author1, title='The Light Fantastic')
 
         # Create another book with same title, but different author
         author2 = AuthorFactory.create(nationality=None)
         BookFactory.create(author=author2, title='The Colour of Magic')
+
+        # Add genres to books 1-2
+        fantasy = GenreFactory.create(name='Fantasy')
+        comedy = GenreFactory.create(name='Comedy')
+        book1.genres.add(fantasy, comedy)
+        book2.genres.add(fantasy, comedy)
 
         # Group by author, should return two with only author set
         res = Book.objects.group_by('author').order_by('author').distinct()
@@ -146,3 +152,18 @@ class QuerySetTest(TestCase):
             oth.title
         with self.assertRaises(AttributeError):
             oth.author
+
+        # Group by title+genre, should expand to 5 groups
+        res = Book.objects.group_by('title', 'genres').order_by('genres__name', 'title').distinct()
+        self.assertEqual(res.count(), 5)
+        b1, b2, b3, b4, b5 = res.all()
+        self.assertEqual(b1.genres, None)
+        self.assertEqual(b1.title, 'The Colour of Magic')
+        self.assertEqual(b2.genres, comedy)
+        self.assertEqual(b2.title, 'The Colour of Magic')
+        self.assertEqual(b3.genres, comedy)
+        self.assertEqual(b3.title, 'The Light Fantastic')
+        self.assertEqual(b4.genres, fantasy)
+        self.assertEqual(b4.title, 'The Colour of Magic')
+        self.assertEqual(b5.genres, fantasy)
+        self.assertEqual(b5.title, 'The Light Fantastic')
