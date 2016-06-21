@@ -63,5 +63,9 @@ setup(
     entry_points={},
 
     # Django test suite
-    test_suite='runtests.run_tests'
+    test_suite='runtests.run_tests',
+    tests_require=[
+        'factory_boy',
+        'mock'
+    ]
 )

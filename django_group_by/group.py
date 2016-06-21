@@ -61,9 +61,17 @@ class AggregatedGroup(object):
                     pass
 
                 else:
-                    # It is a model, build instance from data
+                    # Model, first shorten field name
                     k = k.replace('__', '_')
-                    v = rel_model(**v)
+
+                    # Now init instance if required (not if we got ID None)
+                    if 'id' in v and v['id'] is None:
+                        # This means we grouped by ID, if it's none then FK is None
+                        v = None
+
+                    else:
+                        # Either we have ID or we didn't group by ID, use instance
+                        v = rel_model(**v)
 
             # Set value
             setattr(self, k, v)

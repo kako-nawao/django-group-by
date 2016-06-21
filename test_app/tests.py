@@ -46,7 +46,13 @@ class AggregatedGroupTest(TestCase):
         with self.assertRaises(AttributeError):
             agg.genre
 
-        # Provide also related models
+        # FK None (all fields None, including ID), should not init model
+        values.update({'author__id': None, 'author__name': None})
+        agg = AggregatedGroup(Book, values)
+        self.assertEqual(agg.author, None)
+
+        # Change to FK values, without ID
+        values.pop('author__id')
         values.update({'author__name': 'Terry Pratchett', 'genre__name': 'Fantasy'})
         agg = AggregatedGroup(Book, values)
         self.assertEqual(type(agg.author), Author)
@@ -92,7 +98,7 @@ class QuerySetTest(TestCase):
         BookFactory.create(author=author1, title='The Light Fantastic')
 
         # Create another book with same title, but different author
-        author2 = AuthorFactory.create(nationality__name='United States')
+        author2 = AuthorFactory.create(nationality=None)
         BookFactory.create(author=author2, title='The Colour of Magic')
 
         # Group by author, should return two with only author set
@@ -125,7 +131,8 @@ class QuerySetTest(TestCase):
                 group.genre
 
         # Group by nationality, only attr author_nationality is included
-        res = Book.objects.group_by('author__nationality').order_by('author__nationality').distinct()
+        # Note: invert order because None goes first
+        res = Book.objects.group_by('author__nationality').order_by('-author__nationality').distinct()
         self.assertEqual(res.count(), 2)
         tp, oth = res.all()
         self.assertEqual(tp.author_nationality, author1.nationality)
@@ -134,8 +141,7 @@ class QuerySetTest(TestCase):
             tp.title
         with self.assertRaises(AttributeError):
             tp.author
-        self.assertEqual(oth.author_nationality, author2.nationality)
-        self.assertEqual(oth.author_nationality.name, 'United States')
+        self.assertEqual(oth.author_nationality, None)
         with self.assertRaises(AttributeError):
             oth.title
         with self.assertRaises(AttributeError):
