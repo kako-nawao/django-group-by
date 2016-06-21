@@ -41,4 +41,3 @@ class BookFactory(DjangoModelFactory):
     title = Faker('sentence')
     publication_date = Faker('date_time')
     author = SubFactory(AuthorFactory)
-    genre = SubFactory(GenreFactory)

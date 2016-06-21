@@ -9,7 +9,7 @@ class Book(models.Model):
     title = models.CharField(max_length=50)
     publication_date = models.DateTimeField()
     author = models.ForeignKey('Author')
-    genre = models.ForeignKey('Genre')
+    genres = models.ManyToManyField('Genre')
 
 
 class Author(models.Model):

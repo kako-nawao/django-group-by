@@ -2,7 +2,7 @@
 This module contains the final mixin implementation, for whatever version
 of Django is present.
 """
-from django.db.models import ForeignKey
+from django.db.models import ForeignKey, ManyToManyField
 
 try:
     # Django 1.9+
@@ -46,8 +46,8 @@ class GroupByMixin(GroupByMixinBase):
                 # Simple field, get the field instance
                 model_field = model._meta.get_field(field_name)
 
-                if isinstance(model_field, ForeignKey):
-                    # It's a FK, get model
+                if isinstance(model_field, (ForeignKey, ManyToManyField)):
+                    # It's a related field, get model
                     related_model = model_field.related_model
 
                     # Append all its fields with the correct prefix
