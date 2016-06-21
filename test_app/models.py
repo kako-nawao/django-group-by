@@ -14,7 +14,7 @@ class Book(models.Model):
 
 class Author(models.Model):
     name = models.CharField(max_length=50)
-    nationality = models.ForeignKey('Nation')
+    nationality = models.ForeignKey('Nation', null=True)
 
 
 class Genre(models.Model):

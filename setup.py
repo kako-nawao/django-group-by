@@ -20,7 +20,7 @@ setup(
     name='django_group_by',
 
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.2.1',
+    version='0.2.2',
 
     description='Group by arbitrary model fields',
     long_description=long_description,
@@ -48,9 +48,7 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'test_app']),
 
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=[
-        'django>=1.8,<1.9.99'
-    ],
+    install_requires=[],
     extras_require={},
     package_data={},
 
@@ -63,5 +61,5 @@ setup(
     entry_points={},
 
     # Django test suite
-    test_suite='runtests.run_tests'
+    test_suite='runtests.run_tests',
 )
