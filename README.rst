@@ -2,7 +2,7 @@
 Django GroupBy
 ==============
 
-.. image:: https://img.shields.io/pypi/l/django-group-by.svg
+.. image:: https://img.shields.io/github/license/kako-nawao/django-group-by.svg
     :target: http://www.opensource.org/licenses/MIT
 
 .. image:: https://img.shields.io/pypi/pyversions/django-group-by.svg
@@ -12,8 +12,8 @@ Django GroupBy
 
 .. image:: https://img.shields.io/travis/kako-nawao/django-group-by.svg
     :target: https://travis-ci.org/kako-nawao/django-group-by
-.. image:: https://img.shields.io/coveralls/kako-nawao/django-group-by.svg
-    :target: https://coveralls.io/github/kako-nawao/django-group-by
+.. image:: https://img.shields.io/codecov/c/github/kako-nawao/django-group-by.svg
+    :target: https://codecov.io/gh/kako-nawao/django-group-by
 
 This package provides a mixin for Django QuerySets that adds a method ``group_by`` that
 behaves mostly like the ``values`` method, but with one difference: its iterator does not
@@ -29,8 +29,8 @@ Install from PyPI::
 Compatibility
 ~~~~~~~~~~~~~
 
-This package is compatible with Django 1.8 and 1.9, and Python versions 2.7, 3.4 and 3.5.
-Probably others, but those 6 combinations are the ones against which we build (by Travis CI).
+This package is compatible with Django 1.8, 1.9 and 1.10, and Python versions 2.7, 3.4, 3.5 and 3.6.
+Probably others, but those 12 combinations are the ones against which we build (by Travis CI).
 
 
 Usage
