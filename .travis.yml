@@ -6,13 +6,17 @@ branches:
 # Build definition; language, deps, scripts
 language: python
 python:
-  - "3.5"
-  - "3.6"
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.6
 install:
   - pip install -r requirements/dev.txt
 script:
-  - tox
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then tox -e py27-dj18,py27-dj19,py27-dj110; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.4 ]]; then tox -e py34-dj18,py34-dj19,py34-dj110; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then tox -e py35-dj18,py35-dj19,py35-dj110; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then tox -e py36-dj18,py36-dj19,py36-dj110; fi
 after_success:
   - pip install coveralls
   - coveralls
-  - coverage erase
